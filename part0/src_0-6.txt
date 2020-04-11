@@ -1,0 +1,16 @@
+title 0.6: uusi muistiinpano (spa)
+
+note over selain
+Selaimen tapahtumankäsittelijä 
+luo muistiinpanon, lisää sen 
+muistiinpanojen listalle ja piirtää 
+ruudun sisällön uudelleen
+end note
+
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+note over palvelin:
+palvelin suorittaa koodin joka lisää
+muistiinpanon tietokantaan
+end note
+palvelin-->selain: {"message":"note created"}
+
