@@ -1,5 +1,6 @@
-## Full stack open
+## Full stack open 2020
 
-Course exercises.
+My solutions to the course exercises. See https://fullstackopen.com/.
+
 
 
