@@ -1,23 +1,18 @@
 {
-  "persons":[
-    { 
-      "name": "Arto Hellasss", 
-      "number": "040-123456",
-      "id": 1
-    },
-    { 
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523",
+  "contacts": [
+    {
+      "name": "Viis",
+      "number": "5",
       "id": 2
     },
-    { 
-      "name": "Dan Abramov", 
-      "number": "12-43-234345",
+    {
+      "name": "Kuus",
+      "number": "434",
       "id": 3
     },
-    { 
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122",
+    {
+      "name": "Seppo Sepponen",
+      "number": "9999",
       "id": 4
     }
   ]
