@@ -3,6 +3,7 @@ import ContactList from './ContactList'
 import Filter from './Filter'
 import InputForm from './InputForm'
 import phoneNumberService from '../services/phoneNumbers'
+import Notification from './Notification'
 
 
 const App = () => {
@@ -12,6 +13,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [notification, setNotification] = useState(null)
 
   // Event handlers
   const handleFilterChange = (event) => { setNewFilter(event.target.value) }
@@ -21,6 +23,30 @@ const App = () => {
   // Effect hook for data loading
   const hook = () => { phoneNumberService.getAll().then(response => setContacts(response.data)) }
   useEffect(hook, [])
+
+  // Functions templates for showing messages
+  const messageDisplayTime = 3000 // ms
+  const standardError = {type: 'errorNotification', message: 'Operation failed. Refresh your browser.'}
+  const deleteNotificationFunction = (name) => {
+    setNotification({type: 'deleteNotification', message: `Deleted ${name} from contacts!`})
+    setTimeout(() => {setNotification(null)}, messageDisplayTime)
+  }
+
+  const updateNotificationFunction = (name) => {
+    setNotification({type: 'updateNotification', message: `Updated ${name} in contacts!`})
+    setTimeout(() => {setNotification(null)}, messageDisplayTime)
+  }
+
+  const addNotificationFunction = (name) => {
+    setNotification({type: 'addNotification', message: `Added ${name} to contacts!`})
+    setTimeout(() => {setNotification(null)}, messageDisplayTime)
+  }
+
+  const errorNotificationFunction = () => {
+    setNotification(standardError)
+    setTimeout(() => {setNotification(null)}, messageDisplayTime)
+  }
+
 
   // Function that is executed on form submission
   const addContact = (event) => {
@@ -34,11 +60,13 @@ const App = () => {
       const confirm = window.confirm(msg)
       if (confirm) {
         phoneNumberService.update(sameName[0].id, contactObject).then(hook)
+        .then(() => {updateNotificationFunction(newName)}).catch(error => {errorNotificationFunction()})
       }
     } else {
       phoneNumberService.create(contactObject).then(
-        response => { setContacts(contacts.concat(response.data)) }
-      )
+        response => {setContacts(contacts.concat(response.data))}
+      ).then(() => {addNotificationFunction(newName)})
+      .catch(error => {errorNotificationFunction()})
     }
 
     // Clear form fields
@@ -52,12 +80,15 @@ const App = () => {
     const confirm = window.confirm(`Delete ${button.name}?`);
     if (confirm) {
       phoneNumberService.destroy(button.id).then(hook)
+      .then(() => {deleteNotificationFunction(button.name)})
+      .catch(error => {errorNotificationFunction()})
     }
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification notification={notification}></Notification>
       <Filter value={newFilter} onChange={handleFilterChange}></Filter>
 
       <h2>Add new</h2>
