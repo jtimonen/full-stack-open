@@ -1,0 +1,22 @@
+{
+  "name": "phonebook",
+  "version": "1.0.0",
+  "description": "App for storing and viewing phone numbers of contacts.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \\\"Error: no test specified\\\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jtimonen/full-stack-open/part3/phonebook"
+  },
+  "keywords": [
+    "react",
+    "app",
+    "test",
+    "server",
+    "database"
+  ],
+  "author": "Juho Timonen",
+  "license": "MIT"
+}
