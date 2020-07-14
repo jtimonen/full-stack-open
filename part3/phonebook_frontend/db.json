@@ -1,0 +1,29 @@
+{
+  "contacts": [
+    {
+      "name": "Juho Timonen",
+      "number": "23234",
+      "id": 12
+    },
+    {
+      "name": "Matti",
+      "number": "23432",
+      "id": 14
+    },
+    {
+      "name": "Masa Parta",
+      "number": "23423",
+      "id": 15
+    },
+    {
+      "name": "Sepi",
+      "number": "23423",
+      "id": 18
+    },
+    {
+      "name": "Ada Lovelace",
+      "number": "43-234432999",
+      "id": 19
+    }
+  ]
+}
