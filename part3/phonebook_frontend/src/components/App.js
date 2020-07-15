@@ -26,9 +26,9 @@ const App = () => {
 
   // Functions templates for showing messages
   const messageDisplayTime = 3000 // ms
-  const standardError = {type: 'errorNotification', message: 'Operation failed. Refresh your browser.'}
+  const standardError = {type: 'errorNotification', message: 'Operation failed.'}
   const deleteNotificationFunction = (name) => {
-    setNotification({type: 'deleteNotification', message: `Deleted ${name} from contacts!`})
+    setNotification({type: 'deleteNotification', message: `Deleted ${name} from contacts.`})
     setTimeout(() => {setNotification(null)}, messageDisplayTime)
   }
 
@@ -59,6 +59,7 @@ const App = () => {
       const msg = `Contact ${newName} is already in the phonebook. Do you want to replace the old contact?`
       const confirm = window.confirm(msg)
       if (confirm) {
+        console.log(sameName[0].id)
         phoneNumberService.update(sameName[0].id, contactObject).then(hook)
         .then(() => {updateNotificationFunction(newName)}).catch(error => {errorNotificationFunction()})
       }
