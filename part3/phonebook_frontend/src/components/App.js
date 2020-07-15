@@ -33,7 +33,7 @@ const App = () => {
   }
 
   const updateNotificationFunction = (name) => {
-    setNotification({type: 'updateNotification', message: `Updated ${name} in contacts!`})
+    setNotification({type: 'updateNotification', message: `Updated contact ${name}.`})
     setTimeout(() => {setNotification(null)}, messageDisplayTime)
   }
 
@@ -58,7 +58,6 @@ const App = () => {
     if (sameName.length > 0) {
       const msg = `Contact ${newName} is already in the phonebook. Do you want to replace the old contact?`
       const confirm = window.confirm(msg)
-      console.log('Updating not yet implemented!')
       if (confirm) {
         phoneNumberService.update(sameName[0].id, contactObject).then(hook)
         .then(() => {updateNotificationFunction(newName)}).catch(error => {errorNotificationFunction()})
