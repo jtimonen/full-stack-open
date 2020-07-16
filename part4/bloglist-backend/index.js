@@ -1,6 +1,8 @@
-const http = require('http')
+require('dotenv').config()
+//const http = require('http')
 const express = require('express')
 const app = express()
+app.use(express.json())
 const cors = require('cors')
 const mongoose = require('mongoose')
 
@@ -13,11 +15,16 @@ const blogSchema = mongoose.Schema({
 
 const Blog = mongoose.model('Blog', blogSchema)
 
-const mongoUrl = 'mongodb://localhost/bloglist'
+const mongoUrl = process.env.MONGODB_URL
+console.log(mongoUrl)
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
 
 app.use(cors())
 app.use(express.json())
+
+app.get('/', (_, response) => {
+    response.send('<h1>Bloglist App</h1>')
+})
 
 app.get('/api/blogs', (_, response) => {
     Blog.find({})
@@ -34,7 +41,14 @@ app.post('/api/blogs', (request, response) => {
         })
 })
 
-const PORT = 3001
+app.delete('/api/blogs/:id', (request, response) => {
+    Blog.findByIdAndDelete(request.params.id)
+        .then(() => {
+            response.status(204).end()
+        })
+})
+
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
