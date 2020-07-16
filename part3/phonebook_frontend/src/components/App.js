@@ -25,7 +25,7 @@ const App = () => {
   useEffect(hook, [])
 
   // Functions templates for showing messages
-  const messageDisplayTime = 3000 // ms
+  const messageDisplayTime = 5000 // ms
   const standardError = {type: 'errorNotification', message: 'Operation failed.'}
   const deleteNotificationFunction = (name) => {
     setNotification({type: 'deleteNotification', message: `Deleted ${name} from contacts.`})
@@ -42,8 +42,13 @@ const App = () => {
     setTimeout(() => {setNotification(null)}, messageDisplayTime)
   }
 
-  const errorNotificationFunction = () => {
-    setNotification(standardError)
+  const errorNotificationFunction = (error) => {
+    const msg = error.response.data.error
+    if(msg){
+      setNotification({type: 'errorNotification', message: msg})
+    }else{
+       setNotification(standardError)
+    }
     setTimeout(() => {setNotification(null)}, messageDisplayTime)
   }
 
@@ -59,15 +64,14 @@ const App = () => {
       const msg = `Contact ${newName} is already in the phonebook. Do you want to replace the old contact?`
       const confirm = window.confirm(msg)
       if (confirm) {
-        console.log(sameName[0].id)
         phoneNumberService.update(sameName[0].id, contactObject).then(hook)
-        .then(() => {updateNotificationFunction(newName)}).catch(error => {errorNotificationFunction()})
+        .then(() => {updateNotificationFunction(newName)}).catch(errorNotificationFunction)
       }
     } else {
       phoneNumberService.create(contactObject).then(
         response => {setContacts(contacts.concat(response.data))}
       ).then(() => {addNotificationFunction(newName)})
-      .catch(error => {errorNotificationFunction()})
+      .catch(errorNotificationFunction)
     }
 
     // Clear form fields
@@ -82,7 +86,7 @@ const App = () => {
     if (confirm) {
       phoneNumberService.destroy(button.id).then(hook)
       .then(() => {deleteNotificationFunction(button.name)})
-      .catch(error => {errorNotificationFunction()})
+      .catch(errorNotificationFunction)
     }
   }
 
@@ -98,7 +102,7 @@ const App = () => {
         newNumber={newNumber} handleNumberChange={handleNumberChange}>
       </InputForm>
 
-      <h2>Numbers</h2>
+      <h2>Contacts</h2>
       <ContactList contacts={contacts} filter={newFilter} deleteFun={deleteContact}></ContactList>
     </div>
   )
