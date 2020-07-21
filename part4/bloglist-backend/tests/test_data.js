@@ -1,3 +1,4 @@
+
 const longBlogList = [
     {
         _id: '5a422a851b54a676234d17f7',
@@ -31,7 +32,8 @@ const longBlogList = [
     },
     {
         _id: '5a422ba71b54a676234d17fb',
-        title: 'TDD harms architecture', author: 'Robert C. Martin',
+        title: 'TDD harms architecture',
+        author: 'Robert C. Martin',
         url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
         likes: 0,
         __v: 0
