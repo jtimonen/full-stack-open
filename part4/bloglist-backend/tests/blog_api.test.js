@@ -1,10 +1,10 @@
-const mongoose = require('mongoose')
-const app = require('../app')
 const supertest = require('supertest')
+const app = require('../app')
 const api = supertest(app)
+const mongoose = require('mongoose')
 const testData = require('./test_data')
-const Blog = require('../models/blog')
 const helper = require('./test_helper')
+const Blog = require('../models/blog')
 
 // BEFORE ALL -------------------------------------------------
 
@@ -126,9 +126,79 @@ describe('4.12*: POST request without defining title or url', () => {
 
 })
 
+// DELETE -----------------------------------------------------
+
+describe('4.13: DELETE requests', () => {
+
+    test('a blog can be deleted', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToDelete = blogsAtStart[0]
+
+        await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .expect(204)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(testData.longBlogList.length - 1)
+    })
+
+    test('DELETE request with invalid id does not delete anything and returns 400', async () => {
+
+        await api
+            .delete('/api/blogs/123')
+            .expect(400)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(testData.longBlogList.length)
+    })
+
+})
+
+// PUT ----------------------------------------------------------
+
+describe('4.14*: PUT requests', () => {
+
+    test('a valid PUT request returns 204', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToUpdate = blogsAtStart[0]
+
+        await api
+            .put(`/api/blogs/${blogToUpdate.id}`)
+            .send(blogToUpdate)
+            .expect(204)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(testData.longBlogList.length)
+    })
+
+    test('a blog cannot be updated after deleting it', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blog = blogsAtStart[0]
+        await api.delete(`/api/blogs/${blog.id}`)
+
+        await api
+            .put(`/api/blogs/${blog.id}`)
+            .send(blog)
+            .expect(404)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(testData.longBlogList.length - 1)
+    })
+
+    test('a PUT request with invalid id returns 400', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blog = blogsAtStart[0]
+        await api
+            .put('/api/blogs/123')
+            .send(blog)
+            .expect(400)
+
+    })
+
+})
+
 // AFTER ALL --------------------------------------------------
 
 afterAll(() => {
     mongoose.connection.close()
 })
-
