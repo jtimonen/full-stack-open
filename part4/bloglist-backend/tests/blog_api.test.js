@@ -195,6 +195,20 @@ describe('4.14*: PUT requests', () => {
 
     })
 
+    test('likes can be updated', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToUpdate = blogsAtStart[0]
+        const newContent = {...blogToUpdate, likes: blogToUpdate.likes + 1}
+
+        await api
+            .put(`/api/blogs/${blogToUpdate.id}`)
+            .send(newContent)
+            .expect(204)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd[0].likes).toBe(blogToUpdate.likes + 1)
+    })
+
 })
 
 // AFTER ALL --------------------------------------------------
