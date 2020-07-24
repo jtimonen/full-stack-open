@@ -1,25 +1,45 @@
-const bcrypt = require('bcrypt')
-const User = require('../models/user')
 const supertest = require('supertest')
 const app = require('../app')
+const bcrypt = require('bcrypt')
 const api = supertest(app)
-const helper = require('./test_helper')
 const mongoose = require('mongoose')
+const testData = require('./test_data')
+const helper = require('./test_helper')
+const Blog = require('../models/blog')
+const User = require('../models/user')
 
+// BEFORE EACH -------------------------------------------------
 
-describe('when there is initially one user at db', () => {
-    beforeEach(async () => {
-        await User.deleteMany({})
+beforeEach(async () => {
 
-        const passwordHash = await bcrypt.hash('sekret', 10)
-        const user = new User({
-            _id: '5f174f0ef4c7353e80a184bd',
-            name: 'admin',
-            username: 'root',
-            passwordHash })
+    // Delete all blogs and users
+    await Blog.deleteMany({})
+    await User.deleteMany({})
 
-        await user.save()
+    // Create one user
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({
+        _id: '5f174f0ef4c7353e80a184bd',
+        name: 'admin',
+        username: 'root',
+        passwordHash
     })
+    await user.save()
+
+    // Create many blogs for that user
+    for (let blog of testData.longBlogList) {
+        let blogObject = new Blog(blog)
+        const savedBlog = await blogObject.save()
+        user.blogs = user.blogs.concat(savedBlog._id)
+        await user.save()
+    }
+
+})
+
+
+// ADDING USERS -------------------------------------------------------------
+
+describe('4.16: invalid requests to user api', () => {
 
     test('creation fails with proper statuscode and message if username already taken', async () => {
         const usersAtStart = await helper.usersInDb()
@@ -81,7 +101,9 @@ describe('when there is initially one user at db', () => {
         const usersAtEnd = await helper.usersInDb()
         expect(usersAtEnd).toHaveLength(usersAtStart.length)
     })
+})
 
+describe('4.15: valid requests to user api', () => {
     test('creation succeeds with a fresh username', async () => {
         const usersAtStart = await helper.usersInDb()
 
@@ -105,6 +127,9 @@ describe('when there is initially one user at db', () => {
     })
 
 })
+
+
+// AFTER ALL --------------------------------------------------
 
 afterAll(() => {
     mongoose.connection.close()
