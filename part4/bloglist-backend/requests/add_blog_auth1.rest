@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/blogs 
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRpbXNlIiwiaWQiOiI1ZjFhNDI0YTg0ZjMyOTJkYzhkYTE4NjYiLCJpYXQiOjE1OTU1NTY1MjR9.XXvixO96BXZrs1X3B8ibKU0uWoZyGGci6Sh9JZnUcqE
+
+{
+    "author": "Edgar Allan Poe",
+    "title": "Korppi",
+    "url": "https://korppi.com/"
+}

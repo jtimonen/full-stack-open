@@ -1,9 +1,0 @@
-POST http://localhost:3001/api/blogs 
-Content-Type: application/json
-
-{
-    "title": "Seikkailut",
-    "author": "Timse",
-    "url": "www.timse.net",
-    "likes": 3
-}

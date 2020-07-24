@@ -1,0 +1,9 @@
+PUT http://localhost:3001/api/blogs/5f1a44c65eb9e812d4ab0127
+Content-Type: application/json
+
+{
+    "author": "Edgar Allan Poe",
+    "title": "Korppi",
+    "url": "https://korppi.com/",
+    "likes": 10
+}
