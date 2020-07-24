@@ -4,5 +4,5 @@
 - Express
 - MongoDB (mongoose)
 - Tests using Jest
-- Authentication (bcrypt)
+- Authentication (bcrypt, jsonwebtoken)
 
