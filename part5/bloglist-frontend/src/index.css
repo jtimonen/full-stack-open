@@ -20,3 +20,31 @@ h1, h2, h3 {
 .authors {
   color: rgb(241, 244, 245);
 }
+
+.likes {
+  color: rgb(241, 142, 225);
+}
+
+.adder {
+  color: rgb(194, 228, 240);
+}
+
+.notification{
+  color: rgb(250, 239, 239);
+  background:rgb(100, 155, 173);
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-right: 30px;
+}
+
+.error{
+  color: rgb(114, 21, 21);
+  background:rgb(248, 166, 166);
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-right: 30px;
+}
