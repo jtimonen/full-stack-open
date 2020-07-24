@@ -1,14 +1,14 @@
 const supertest = require('supertest')
 const app = require('../app')
-const bcrypt = require('bcrypt')
 const api = supertest(app)
 const mongoose = require('mongoose')
-const testData = require('./test_data')
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
 // BEFORE EACH -------------------------------------------------
+let token0 = 'undefined'
+let token1 = 'undefined'
 
 beforeEach(async () => {
 
@@ -16,26 +16,28 @@ beforeEach(async () => {
     await Blog.deleteMany({})
     await User.deleteMany({})
 
-    // Create one user
-    const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({
-        _id: '5f174f0ef4c7353e80a184bd',
-        name: 'admin',
-        username: 'root',
-        passwordHash
-    })
-    await user.save()
+    // Create two users
+    await api.post('/api/users').send(helper.testUsers[0])
+    await api.post('/api/users').send(helper.testUsers[1])
 
-    // Create many blogs for that user
-    for (let blog of testData.longBlogList) {
-        let blogObject = new Blog(blog)
-        const savedBlog = await blogObject.save()
-        user.blogs = user.blogs.concat(savedBlog._id)
-        await user.save()
-    }
+    // Get user tokens
+    const login0 = await api.post('/api/login').send(helper.testUsers[0])
+    const login1 = await api.post('/api/login').send(helper.testUsers[1])
+    token0 = `bearer ${login0.body.token}`
+    token1 = `bearer ${login1.body.token}`
 
+    // Create blogs for first user
+    const testBlogList0 = helper.testBlogList0
+    await api.post('/api/blogs').send(testBlogList0[0]).set('Authorization', token0)
+    await api.post('/api/blogs').send(testBlogList0[1]).set('Authorization', token0)
+    await api.post('/api/blogs').send(testBlogList0[2]).set('Authorization', token0)
+    await api.post('/api/blogs').send(testBlogList0[3]).set('Authorization', token0)
+
+    // Create blogs for second user
+    const testBlogList1 = helper.testBlogList1
+    await api.post('/api/blogs').send(testBlogList1[0]).set('Authorization', token1)
+    await api.post('/api/blogs').send(testBlogList1[1]).set('Authorization', token1)
 })
-
 
 // ADDING USERS -------------------------------------------------------------
 
@@ -45,8 +47,8 @@ describe('4.16: invalid requests to user api', () => {
         const usersAtStart = await helper.usersInDb()
 
         const newUser = {
-            username: 'root',
-            name: 'Superuser',
+            username: helper.testUsers[0].username,
+            name: 'Timo Timonen',
             password: 'salainen',
         }
 

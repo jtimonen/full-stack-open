@@ -1,14 +1,14 @@
 const supertest = require('supertest')
 const app = require('../app')
-const bcrypt = require('bcrypt')
 const api = supertest(app)
 const mongoose = require('mongoose')
-const testData = require('./test_data')
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
 // BEFORE EACH -------------------------------------------------
+let token0 = 'undefined'
+let token1 = 'undefined'
 
 beforeEach(async () => {
 
@@ -16,25 +16,30 @@ beforeEach(async () => {
     await Blog.deleteMany({})
     await User.deleteMany({})
 
-    // Create one user
-    const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({
-        _id: '5f174f0ef4c7353e80a184bd',
-        name: 'admin',
-        username: 'root',
-        passwordHash
-    })
-    await user.save()
+    // Create two users
+    await api.post('/api/users').send(helper.testUsers[0])
+    await api.post('/api/users').send(helper.testUsers[1])
 
-    // Create many blogs for that user
-    for (let blog of testData.longBlogList) {
-        let blogObject = new Blog(blog)
-        const savedBlog = await blogObject.save()
-        user.blogs = user.blogs.concat(savedBlog._id)
-        await user.save()
-    }
+    // Get user tokens
+    const login0 = await api.post('/api/login').send(helper.testUsers[0])
+    const login1 = await api.post('/api/login').send(helper.testUsers[1])
+    token0 = `bearer ${login0.body.token}`
+    token1 = `bearer ${login1.body.token}`
 
+    // Create blogs for first user
+    const testBlogList0 = helper.testBlogList0
+    await api.post('/api/blogs').send(testBlogList0[0]).set('Authorization', token0)
+    await api.post('/api/blogs').send(testBlogList0[1]).set('Authorization', token0)
+    await api.post('/api/blogs').send(testBlogList0[2]).set('Authorization', token0)
+    await api.post('/api/blogs').send(testBlogList0[3]).set('Authorization', token0)
+
+    // Create blogs for second user
+    const testBlogList1 = helper.testBlogList1
+    await api.post('/api/blogs').send(testBlogList1[0]).set('Authorization', token1)
+    await api.post('/api/blogs').send(testBlogList1[1]).set('Authorization', token1)
 })
+
+const nInitialBlogs = 6
 
 // GET REQUESTS TO BLOG API --------------------------------------
 
@@ -49,12 +54,12 @@ describe('4.8: GET requests', () => {
 
     test('all blogs are returned', async () => {
         const response = await api.get('/api/blogs')
-        expect(response.body).toHaveLength(testData.longBlogList.length)
+        expect(response.body).toHaveLength(nInitialBlogs)
     })
 
-    test('the first blog has 7 likes', async () => {
+    test('the first blog has 0 likes', async () => {
         const response = await api.get('/api/blogs')
-        expect(response.body[0].likes).toBe(7)
+        expect(response.body[0].likes).toBe(0)
     })
 
 })
@@ -76,18 +81,18 @@ describe('4.10: valid POST requests', () => {
         author: 'Juho Timonen',
         title: 'This is not a blog',
         url: 'www.notablog.com',
-        likes: 0
     }
 
     test('a completely defined valid blog can be added ', async () => {
         await api
             .post('/api/blogs')
             .send(newBlog)
+            .set('Authorization', token0)
             .expect(200)
             .expect('Content-Type', /application\/json/)
 
         const blogsAtEnd = await helper.blogsInDb()
-        expect(blogsAtEnd).toHaveLength(testData.longBlogList.length + 1)
+        expect(blogsAtEnd).toHaveLength(nInitialBlogs + 1)
     })
 
 })
@@ -101,21 +106,20 @@ describe('4.11*: POST request without defining likes', () => {
     }
 
     test('a blog can be added without defining likes', async () => {
-        await api
+        const sent = await api
             .post('/api/blogs')
             .send(newBlog)
+            .set('Authorization', token1)
             .expect(200)
             .expect('Content-Type', /application\/json/)
         const blogsAtEnd = await helper.blogsInDb()
-        expect(blogsAtEnd).toHaveLength(testData.longBlogList.length + 1)
+        expect(blogsAtEnd).toHaveLength(nInitialBlogs + 1)
+        expect(sent.body.likes).toBe(0)
     })
 
-    test('likes is set to zero if not defined', async () => {
-        const moi = await api.post('/api/blogs').send(newBlog)
-        expect(moi.body.likes).toBe(0)
-    })
 
 })
+
 
 describe('4.12*: POST request without defining title or url', () => {
 
@@ -133,46 +137,64 @@ describe('4.12*: POST request without defining title or url', () => {
         await api
             .post('/api/blogs')
             .send(newBlog1)
+            .set('Authorization', token1)
             .expect(400)
         const blogsAtEnd = await helper.blogsInDb()
-        expect(blogsAtEnd).toHaveLength(testData.longBlogList.length)
+        expect(blogsAtEnd).toHaveLength(nInitialBlogs)
     })
 
     test('a blog cannot be added when url is missing', async () => {
         await api
             .post('/api/blogs')
             .send(newBlog2)
+            .set('Authorization', token1)
             .expect(400)
         const blogsAtEnd = await helper.blogsInDb()
-        expect(blogsAtEnd).toHaveLength(testData.longBlogList.length)
+        expect(blogsAtEnd).toHaveLength(nInitialBlogs)
     })
 
 })
 
+
 // DELETE -----------------------------------------------------
 
-describe('4.13: DELETE requests', () => {
+describe('4.13 + 4.22: DELETE requests', () => {
 
-    test('a blog can be deleted', async () => {
+    test('a blog can be deleted with proper user and authorization', async () => {
         const blogsAtStart = await helper.blogsInDb()
         const blogToDelete = blogsAtStart[0]
 
         await api
             .delete(`/api/blogs/${blogToDelete.id}`)
+            .set('Authorization', token0)
             .expect(204)
 
         const blogsAtEnd = await helper.blogsInDb()
-        expect(blogsAtEnd).toHaveLength(testData.longBlogList.length - 1)
+        expect(blogsAtEnd).toHaveLength(nInitialBlogs - 1)
     })
 
     test('DELETE request with invalid id does not delete anything and returns 400', async () => {
 
         await api
             .delete('/api/blogs/123')
+            .set('Authorization', token0)
             .expect(400)
 
         const blogsAtEnd = await helper.blogsInDb()
-        expect(blogsAtEnd).toHaveLength(testData.longBlogList.length)
+        expect(blogsAtEnd).toHaveLength(nInitialBlogs)
+    })
+
+    test('a blog cannot be deleted by user who did not create it', async () => {
+        const blogsAtStart = await helper.blogsInDb()
+        const blogToDelete = blogsAtStart[0]
+
+        await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .set('Authorization', token1)
+            .expect(401)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(nInitialBlogs)
     })
 
 })
@@ -191,13 +213,13 @@ describe('4.14*: PUT requests', () => {
             .expect(204)
 
         const blogsAtEnd = await helper.blogsInDb()
-        expect(blogsAtEnd).toHaveLength(testData.longBlogList.length)
+        expect(blogsAtEnd).toHaveLength(nInitialBlogs)
     })
 
     test('a blog cannot be updated after deleting it', async () => {
         const blogsAtStart = await helper.blogsInDb()
         const blog = blogsAtStart[0]
-        await api.delete(`/api/blogs/${blog.id}`)
+        await api.delete(`/api/blogs/${blog.id}`).set('Authorization', token0)
 
         await api
             .put(`/api/blogs/${blog.id}`)
@@ -205,7 +227,7 @@ describe('4.14*: PUT requests', () => {
             .expect(404)
 
         const blogsAtEnd = await helper.blogsInDb()
-        expect(blogsAtEnd).toHaveLength(testData.longBlogList.length - 1)
+        expect(blogsAtEnd).toHaveLength(nInitialBlogs- 1)
     })
 
     test('a PUT request with invalid id returns 400', async () => {
