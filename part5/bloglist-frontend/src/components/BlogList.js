@@ -9,11 +9,16 @@ const BlogList = ({blogs, user}) => {
     return (
         <div>
         <h2>Blogs</h2>
-        <ol>
-            {blogs.map(blog =>
-                <Blog key={blog.id} blog={blog} />
-            )}
-        </ol>
+        <table className='bordered'>
+            <thead>
+                <tr>
+                <td>Title</td><td>Author</td><td>Likes</td><td>Added by</td>
+                </tr>
+            </thead>
+            <tbody>
+            {blogs.map(blog => <Blog key={blog.id} blog={blog} /> )}
+            </tbody>
+        </table>
         </div>
 )
 

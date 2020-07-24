@@ -12,13 +12,51 @@ h1, h2, h3 {
     font-stretch: expanded;
 }
 
+td {
+  padding: 1px;
+  padding-right: 15px;
+}
+
+table {
+  padding-bottom: 8px;
+}
+
+button{
+  background: rgb(38, 128, 211);
+  color: #e4e8f0;
+  border-radius: 1px;
+  border-style: none;
+  padding: 4px;
+  padding-right: 10px;
+  padding-left: 10px;
+  font-size: 16px;
+}
+
+thead{
+    font-weight: bold;
+    color: rgb(234, 238, 241);
+}
+
+input {
+  background-color: rgb(243, 243, 247);
+  border-radius: 2px;
+  border-style: solid;
+}
+
 .titles {
+  color: rgb(206, 219, 228);
   font-style: italic;
-  color: rgb(133, 195, 245);
+}
+
+.bordered {
+  border-style: solid;
+  border-radius: 5px;
+  background: rgb(76, 77, 80);
+  padding: 16px;
 }
 
 .authors {
-  color: rgb(241, 244, 245);
+  color: rgb(210, 221, 230);
 }
 
 .likes {
@@ -26,7 +64,7 @@ h1, h2, h3 {
 }
 
 .adder {
-  color: rgb(194, 228, 240);
+  color: rgb(210, 222, 226);
 }
 
 .notification{

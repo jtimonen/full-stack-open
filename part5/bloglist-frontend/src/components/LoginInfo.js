@@ -5,8 +5,8 @@ const LoginInfo = ({ user, logoutFun }) => {
         return (null)
     }
     return (
-        <div>
-            Logged in as {user.username} ({user.name}) <button onClick={logoutFun}>Log out</button>
+        <div className='login'>
+            Logged in as {user.username} ({user.name}) <button onClick={logoutFun}>logout</button>
         </div>
     )
 }
