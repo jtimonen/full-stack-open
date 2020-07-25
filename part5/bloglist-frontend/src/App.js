@@ -6,17 +6,15 @@ import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import LoginInfo from './components/LoginInfo'
+import Togglable from './components/Togglable'
+import VisibleWhenLogged from './components/VisibleWhenLogged'
+import VisibleWhenNotLogged from './components/VisibleWhenNotLogged'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [notificationMessage, setNotificationMessage] = useState(null)
-  const [newBlogTitle, setNewBlogTitle] = useState('')
-  const [newBlogAuthor, setNewBlogAuthor] = useState('')
-  const [newBlogUrl, setNewBlogUrl] = useState('')
 
   // Effect hooks
   useEffect(() => {
@@ -35,19 +33,12 @@ const App = () => {
   }, [])
 
   // Login handler
-  const handleLogin = async (event) => {
-    event.preventDefault()
+  const handleLogin = async (username, password) => {
     try {
-      const user = await loginService.login({
-        username, password,
-      })
-      window.localStorage.setItem(
-        'loggedBlogAppUser', JSON.stringify(user)
-      )
+      const user = await loginService.login({ username, password })
+      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
     } catch (exception) {
       setErrorMessage('Invalid username or password.')
       setTimeout(() => {
@@ -63,27 +54,17 @@ const App = () => {
   }
 
   // Blog add handler
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const blogToAdd = {
-      title: newBlogTitle,
-      author: newBlogAuthor,
-      url: newBlogUrl
-    }
-    const addedBlog = await blogService.create(blogToAdd)
+  const saveBlog = async (blogToSave) => {
 
-    blogService.getAll().then(blogs => {
-      setBlogs(blogs)
-      setNewBlogTitle('')
-      setNewBlogAuthor('')
-      setNewBlogUrl('')
-    }).then(() => {
-      setNotificationMessage(`Added '${addedBlog.title}' to the list!`)
-      setTimeout(() => {
-        setNotificationMessage(null)
-      }, 5000)
-    }
-    )
+    const savedBlog = await blogService.create(blogToSave)
+    blogService.getAll()
+      .then(blogs => { setBlogs(blogs) })
+      .then(() => {
+        setNotificationMessage(`Added '${savedBlog.title}' to the list!`)
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000)
+      })
 
   }
 
@@ -92,29 +73,20 @@ const App = () => {
 
       <LoginInfo user={user} logoutFun={onLogOutClick}></LoginInfo>
 
-      <Notification message={errorMessage} type='error'/>
-      <Notification message={notificationMessage} type='notification'/>
+      <Notification message={errorMessage} type='error' />
+      <Notification message={notificationMessage} type='notification' />
 
-      <LoginForm
-        user={user}
-        username={username}
-        password={password}
-        setUsernameFun={setUsername}
-        setPasswordFun={setPassword}
-        handleLoginFun={handleLogin}
-      >
-      </LoginForm>
+      <VisibleWhenNotLogged user={user}>
+      <LoginForm handleLoginFun={handleLogin}> </LoginForm>
+      </VisibleWhenNotLogged>
 
-      <BlogForm
-        user={user}
-        addBlogFun={addBlog}
-        newBlogTitle={newBlogTitle}
-        newBlogAuthor={newBlogAuthor}
-        newBlogUrl={newBlogUrl}
-        titleChangeFun={setNewBlogTitle}
-        authorChangeFun={setNewBlogAuthor}
-        urlChangeFun={setNewBlogUrl}>
-      </BlogForm>
+      <VisibleWhenLogged user={user}>
+        <h2>Add new blog</h2>
+        <Togglable buttonLabel="add new">
+          <BlogForm saveBlogFun={saveBlog}> </BlogForm>
+        </Togglable>
+      </VisibleWhenLogged>
+
 
       <BlogList blogs={blogs} user={user}></BlogList>
     </div>
