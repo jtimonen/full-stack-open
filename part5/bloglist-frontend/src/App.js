@@ -11,6 +11,8 @@ import VisibleWhenLogged from './components/VisibleWhenLogged'
 import VisibleWhenNotLogged from './components/VisibleWhenNotLogged'
 
 const App = () => {
+
+  // State hooks
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
@@ -18,9 +20,7 @@ const App = () => {
 
   // Effect hooks
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
+    blogService.getAll().then(blogs => setBlogs(blogs))
   }, [])
 
   useEffect(() => {
