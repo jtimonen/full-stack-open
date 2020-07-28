@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogList from './components/BlogList'
@@ -32,6 +32,9 @@ const App = () => {
     }
   }, [])
 
+  // Refs
+  const blogFormRef = useRef()
+
   // Login handler
   const handleLogin = async (username, password) => {
     try {
@@ -57,6 +60,7 @@ const App = () => {
   const saveBlog = async (blogToSave) => {
 
     const savedBlog = await blogService.create(blogToSave)
+    blogFormRef.current.toggleVisibility()
     blogService.getAll()
       .then(blogs => { setBlogs(blogs) })
       .then(() => {
@@ -65,7 +69,32 @@ const App = () => {
           setNotificationMessage(null)
         }, 5000)
       })
+  }
 
+  // Like button click handler
+  const saveLike = async (likedBlog) => {
+    await blogService.update(likedBlog.id, likedBlog)
+    blogService.getAll()
+      .then(blogs => { setBlogs(blogs) })
+      .then(() => {
+        setNotificationMessage(`You liked '${likedBlog.title}'!`)
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000)
+      })
+  }
+
+  // Delete button click handler
+  const deleteBlog = async (blogToDelete) => {
+    await blogService.remove(blogToDelete.id)
+    blogService.getAll()
+      .then(blogs => { setBlogs(blogs) })
+      .then(() => {
+        setNotificationMessage(`Deleted blog '${blogToDelete.title}'!`)
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000)
+      })
   }
 
   return (
@@ -77,18 +106,18 @@ const App = () => {
       <Notification message={notificationMessage} type='notification' />
 
       <VisibleWhenNotLogged user={user}>
-      <LoginForm handleLoginFun={handleLogin}> </LoginForm>
+        <LoginForm handleLoginFun={handleLogin}> </LoginForm>
       </VisibleWhenNotLogged>
 
       <VisibleWhenLogged user={user}>
         <h2>Add new blog</h2>
-        <Togglable buttonLabel="add new">
+        <Togglable buttonLabel="add new" ref={blogFormRef}>
           <BlogForm saveBlogFun={saveBlog}> </BlogForm>
         </Togglable>
       </VisibleWhenLogged>
 
 
-      <BlogList blogs={blogs} user={user}></BlogList>
+      <BlogList blogs={blogs} user={user} saveLikeFun={saveLike} deleteFun={deleteBlog}></BlogList>
     </div>
   )
 }

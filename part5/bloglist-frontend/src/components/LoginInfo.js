@@ -6,7 +6,7 @@ const LoginInfo = ({ user, logoutFun }) => {
     }
     return (
         <div className='login'>
-            Logged in as {user.username} ({user.name}) <button onClick={logoutFun}>logout</button>
+            Logged in as {user.username} ({user.name}) <button onClick={logoutFun} className="normalbutton">logout</button>
         </div>
     )
 }

@@ -41,7 +41,7 @@ const LoginForm = (props) => {
                         </tr>
                     </tbody>
                 </table>
-                <button type="submit">login</button>
+                <button type="submit" className="normalbutton">login</button>
             </form>
         </div>
     )

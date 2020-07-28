@@ -21,8 +21,8 @@ table {
   padding-bottom: 8px;
 }
 
+
 button{
-  background: rgb(38, 128, 211);
   color: #e4e8f0;
   border-radius: 12px;
   border-style: none;
@@ -30,6 +30,18 @@ button{
   padding-right: 10px;
   padding-left: 10px;
   font-size: 16px;
+}
+
+.normalbutton{
+  background: rgb(38, 128, 211);
+}
+
+.likebutton{
+  background:rgb(211, 104, 193);
+}
+
+.deletebutton {
+  background: rgb(135, 143, 151);
 }
 
 thead{
@@ -41,40 +53,46 @@ input {
   background-color: rgb(243, 243, 247);
   border-radius: 2px;
   border-style: solid;
+  width: 300px;
 }
 
 .titles {
-  color: rgb(206, 219, 228);
-  font-style: italic;
+  color: rgb(116, 187, 245);
 }
 
 .bordered {
+  background: rgb(89, 90, 95);
+  padding: 8px;
   border-style: solid;
-  border-radius: 5px;
-  background: rgb(76, 77, 80);
-  padding: 16px;
+  border-color: #282c34;
+  border-radius: 8px;
 }
 
 .authors {
-  color: rgb(210, 221, 230);
+  color: rgb(219, 236, 245);
 }
 
-.likes {
+.blogLikes {
   color: rgb(241, 142, 225);
 }
 
-.adder {
+.blogAdder {
+  color: rgb(210, 222, 226);
+}
+
+.blogUrl {
+  font-style: italic;
   color: rgb(210, 222, 226);
 }
 
 .notification{
   color: rgb(250, 239, 239);
-  background:rgb(100, 155, 173);
+  background:rgb(26, 117, 236);
   border-style: solid;
   border-radius: 5px;
   padding: 10px;
-  margin-bottom: 10px;
-  margin-right: 30px;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 .error{

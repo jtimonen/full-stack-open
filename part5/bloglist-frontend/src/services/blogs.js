@@ -22,8 +22,18 @@ const create = async newObject => {
 }
 
 const update = (id, newObject) => {
-  const request = axios.put(`${ baseUrl } /${id}`, newObject)
+  const url = `${ baseUrl }/${id}`
+  const request = axios.put(url, newObject)
   return request.then(response => response.data)
 }
 
-export default { getAll, create, update, setToken }
+const remove = (id) => {
+  const config = {
+    headers: { Authorization: token },
+  }
+  const url = `${ baseUrl }/${id}`
+  const request = axios.delete(url, config)
+  return request.then(response => response.data)
+}
+
+export default { getAll, create, update, remove, setToken }

@@ -25,7 +25,7 @@ const BlogForm = ({saveBlogFun}) => {
         setNewBlogAuthor('')
         setNewBlogUrl('')
     }
-
+    
     return (
         <div>
             <form onSubmit={addBlog}>
@@ -36,24 +36,24 @@ const BlogForm = ({saveBlogFun}) => {
                         <tr>
                             <td>Title</td>
                             <td>
-                                <input type="text" name='Title' value={newBlogTitle} onChange={fun1} />
+                                <input type="text" name='Title' value={newBlogTitle} onChange={fun1}/>
                             </td>
                         </tr>
                         <tr>
                             <td>Author</td>
                             <td>
-                                <input type="text" name='Author' value={newBlogAuthor} onChange={fun2} />
+                                <input type="text" name='Author' value={newBlogAuthor} onChange={fun2}/>
                             </td>
                         </tr>
                         <tr>
                             <td>URL</td>
                             <td>
-                                <input type="text" name='URL' value={newBlogUrl} onChange={fun3} />
+                                <input type="text" name='URL' value={newBlogUrl} onChange={fun3}/>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <button type="submit">save</button>
+                <button type="submit" className="normalbutton">save</button>
             </form>
         </div>
     )
