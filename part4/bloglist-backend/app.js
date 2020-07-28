@@ -10,21 +10,21 @@ const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
 
-// Database connection
-logger.info('connecting to', config.MONGODB_URL)
-mongoose.connect(config.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => { logger.info('Connected to MongoDB') })
-    .catch((error) => { logger.error('Error connection to MongoDB:', error.message) })
-
 // Create Express App
 const app = express()
 
 // Middleware
 app.use(cors())
-// app.use(express.static('build'))
+app.use(express.static('build')) // front-end
 app.use(express.json())
 app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
+
+// Database connection
+logger.info('connecting to', config.MONGODB_URL)
+mongoose.connect(config.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => { logger.info('Connected to MongoDB') })
+    .catch((error) => { logger.error('Error connection to MongoDB:', error.message) })
 
 // Routers
 app.use('/api/blogs', notesRouter)

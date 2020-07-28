@@ -1,6 +1,6 @@
 import axios from 'axios'
-const baseUrl = '/api/blogs'
-
+import config from '../config.js'
+const baseUrl = config.baseUrl
 let token = null
 
 const setToken = newToken => {

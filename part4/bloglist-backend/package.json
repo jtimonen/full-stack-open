@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint .",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
-    "start": "cross-env NODE_ENV=production node index.js",
+    "start": "NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js"
   },
   "repository": {
@@ -27,7 +27,7 @@
     "express-async-errors": "^3.1.1",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.19",
-    "mongoose": "^5.9.25",
+    "mongoose": "^5.9.26",
     "mongoose-unique-validator": "^2.0.3",
     "morgan": "^1.10.0",
     "set-value": "^3.0.2"

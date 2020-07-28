@@ -44,6 +44,13 @@ button{
   background: rgb(135, 143, 151);
 }
 
+footer {
+  padding-top: 40px;
+  color: rgb(94, 91, 94);
+  font-size: 13px;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
 thead{
     font-weight: bold;
     color: rgb(234, 238, 241);

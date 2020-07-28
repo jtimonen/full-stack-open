@@ -9,6 +9,7 @@ import LoginInfo from './components/LoginInfo'
 import Togglable from './components/Togglable'
 import VisibleWhenLogged from './components/VisibleWhenLogged'
 import VisibleWhenNotLogged from './components/VisibleWhenNotLogged'
+import Footer from './components/Footer'
 
 const App = () => {
 
@@ -118,6 +119,7 @@ const App = () => {
 
 
       <BlogList blogs={blogs} user={user} saveLikeFun={saveLike} deleteFun={deleteBlog}></BlogList>
+      <Footer></Footer>
     </div>
   )
 }
