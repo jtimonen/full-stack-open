@@ -30,7 +30,7 @@
     "mongoose": "^5.9.26",
     "mongoose-unique-validator": "^2.0.3",
     "morgan": "^1.10.0",
-    "set-value": "^3.0.2"
+    "set-value": "^4.0.1"
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
